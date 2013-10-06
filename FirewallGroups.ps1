@@ -17,7 +17,7 @@ $sqliteDriveName = "db"
 
 # Set default dbPath if no DB specified
 if ($dbPath -eq "") {
-	Write-Host "No db argument specified, searching for db locally..."
+	Write-Host "No DB argument specified, searching for db locally..."
 	$curPath = Get-Location
 	$dbName = "db.sqlite"
 	$dbPath = "$curPath\$dbName"
@@ -26,11 +26,12 @@ if ($dbPath -eq "") {
 	if ($dbExists) {
 		mount-sqlite -name $sqliteDriveName -dataSource $dbPath
 	} else {
-		#Init DB with default database tables
+		Write-Host "No local DB found. Creating new Database and initialising tables"
+		# Init DB with default database tables
 		mount-sqlite -name $sqliteDriveName -dataSource $dbPath
-		New-Item db:\grp -Value @{ name="TEXT NOT NULL" }
-		New-Item db:\hosts -Value @{ hostname="TEXT"; ipv4="TEXT NOT NULL" }
-		New-Item db:\relns -Value @{ parentid="INTEGER NOT NULL"; childid="INTEGER NOT NULL" }
+		New-Item db:\grp -Value @{ name="TEXT NOT NULL" } | Out-Null
+		New-Item db:\hosts -Value @{ hostname="TEXT"; ipv4="TEXT NOT NULL" } | Out-Null
+		New-Item db:\relns -Value @{ parentid="INTEGER NOT NULL"; childid="INTEGER NOT NULL"; g2g="BOOLEAN NOT NULL" } | Out-Null
 	}
 	
 } else {

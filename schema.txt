@@ -1,13 +1,14 @@
 Table Hosts
-pri col1 id
-col2 hostname
-col3 ipv4
+pri col1 id INTEGER
+col2 hostname TEXT
+col3 ipv4 TEXT NOT NULL
 
 Table Groups
-pri col1 id
-col2 name
+pri col1 id INTEGER
+col2 name TEXT
 
 Table GroupHosts
-pri col1 id
-col2 groupID
-col3 hostID
+pri col1 id INTEGER
+col2 parentID INTEGER NOT NULL
+col3 childID INTEGER NOT NULL
+col4 g2g BOOLEAN # Is Group to Group relationship?
