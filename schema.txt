@@ -1,0 +1,13 @@
+Table Hosts
+pri col1 id
+col2 hostname
+col3 ipv4
+
+Table Groups
+pri col1 id
+col2 name
+
+Table GroupHosts
+pri col1 id
+col2 groupID
+col3 hostID
