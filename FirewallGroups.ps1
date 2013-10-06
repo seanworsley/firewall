@@ -30,7 +30,7 @@ if ($dbPath -eq "") {
 		mount-sqlite -name $sqliteDriveName -dataSource $dbPath
 		New-Item db:\grp -Value @{ name="TEXT NOT NULL" }
 		New-Item db:\hosts -Value @{ hostname="TEXT"; ipv4="TEXT NOT NULL" }
-		New-Item db:\hostsgrp -Value @{ hostid="INTEGER NOT NULL"; grpid="INTEGER NOT NULL" }
+		New-Item db:\relns -Value @{ parentid="INTEGER NOT NULL"; childid="INTEGER NOT NULL" }
 	}
 	
 } else {
