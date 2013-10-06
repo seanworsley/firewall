@@ -1,4 +1,6 @@
 firewall
 ========
 
-Small firewall replication project
+Small firewall database project.
+
+Powershell script to connect to attached sqlite database
