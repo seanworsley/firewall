@@ -12,6 +12,9 @@ param(
 # Load required powershell modules
 Import-Module sqlite
 
+# Load supporting function. Assumes functions are located in the same directory
+.{.\CRUD.ps1}
+
 # Globals
 $sqliteDriveName = "db"
 
@@ -29,16 +32,34 @@ if ($dbPath -eq "") {
 		Write-Host "No local DB found. Creating new Database and initialising tables"
 		# Init DB with default database tables
 		mount-sqlite -name $sqliteDriveName -dataSource $dbPath
-		New-Item db:\grp -Value @{ name="TEXT NOT NULL" } | Out-Null
-		New-Item db:\hosts -Value @{ hostname="TEXT"; ipv4="TEXT NOT NULL" } | Out-Null
-		New-Item db:\relns -Value @{ parentid="INTEGER NOT NULL"; childid="INTEGER NOT NULL"; g2g="BOOLEAN NOT NULL" } | Out-Null
+		New-Item db:\grp -Value @{ name="TEXT NOT NULL"; parentid="INTEGER" } | Out-Null
+		New-Item db:\hosts -Value @{ hostname="TEXT"; ipv4="TEXT NOT NULL"; parentid="INTEGER" } | Out-Null
+		New-Item db:\relns -Value @{ parentid="INTEGER NOT NULL"; childid="INTEGER NOT NULL" } | Out-Null
 	}
 	
 } else {
 	mount-sqlite -name $sqliteDriveName -dataSource $dbPath
 }
 
-# TODO: Code for adding the goods
+# Main Menu
+$title = "Firewall Database"
+$message = "What would you like to do?"
+$add = New-Object System.Management.Automation.Host.ChoiceDescription "&Add", `
+    "Add an entry to the database."
+$remove = New-Object System.Management.Automation.Host.ChoiceDescription "&Remove", `
+    "Remove an entry from the database."
+$inspect = New-Object System.Management.Automation.Host.ChoiceDescription "&Inspect", `
+	"Inspect current entries"
+$options = [System.Management.Automation.Host.ChoiceDescription[]]($add, $remove, $inspect)
+
+$result = $host.ui.PromptForChoice($title, $message, $options, 0) 
+
+switch ($result)
+    {
+        0 {"You selected Add."}
+        1 {"You selected Remove."}
+    }
+
 
 # Cleanup
 $driveStatus = Get-PSDrive | select Name | where { $_.name -eq $sqliteDriveName}
