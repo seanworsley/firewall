@@ -32,9 +32,9 @@ if ($dbPath -eq "") {
 		Write-Host "No local DB found. Creating new Database and initialising tables"
 		# Init DB with default database tables
 		mount-sqlite -name $sqliteDriveName -dataSource $dbPath
-		New-Item db:\grp -Value @{ name="TEXT NOT NULL"; parentid="INTEGER" } | Out-Null
-		New-Item db:\hosts -Value @{ hostname="TEXT"; ipv4="TEXT NOT NULL"; parentid="INTEGER" } | Out-Null
-		New-Item db:\relns -Value @{ parentid="INTEGER NOT NULL"; childid="INTEGER NOT NULL" } | Out-Null
+		New-Item db:\grp -Value @{ name="TEXT NOT NULL" } | Out-Null
+		New-Item db:\hosts -Value @{ hostname="TEXT"; ipv4="TEXT NOT NULL" } | Out-Null
+		New-Item db:\grphosts -Value @{ parentid="INTEGER NOT NULL"; childid="INTEGER NOT NULL"; g2g="BOOLEAN NOT NULL" } | Out-Null
 	}
 	
 } else {
