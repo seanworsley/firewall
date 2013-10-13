@@ -1,6 +1,5 @@
 # CRUD.ps1 - Written by Sean Worsley on 8/10/2013
 # Supporting functions for adding and removing entries from the database 
-<<<<<<< HEAD
 # Lack of overloading in Powershell seems to be preventing me from centralising duplicate checking code.
 
 # addHostEntry - A function to add a host to the database
@@ -16,10 +15,9 @@ Function addHostEntry($ipaddr, $hostname="", $parentName) {
 # addGroupEntry - A function to add a new group
 Function addGroupEntry($name) {
 
-=======
+}
 
 # addHostEntry - A function to add a host to the database
 Function addHostEntry($ipaddr, $hostname="", $parent="") {
 	
->>>>>>> 2f9b61b28a379f55c79e729645b859713747b51e
 }
