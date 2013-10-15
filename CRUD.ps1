@@ -4,20 +4,19 @@
 
 # addHostEntry - A function to add a host to the database
 # If supplied with a parent argument, creates relevant relationships within the database
-Function addHostEntry($ipaddr, $hostname="", $parentName) {
+Function addHostEntry([string]$ipaddr, [string]$hostname) {
 	# Check for duplicate
-	# TODO
-	
-	# Add the new entry
-	
+	#$id = Get-ChildItem db:\hosts -filter "ipv4 like $ipaddr"
+	$id = $null
+	if ($id -ne $null) {
+		Write-Host "Duplicate Found"
+	} else {
+		# Add the new entry
+		new-item -path db:\hosts -ipv4 $ipaddr -hostname $hostname
+	}
 }
 
 # addGroupEntry - A function to add a new group
 Function addGroupEntry($name) {
 
-}
-
-# addHostEntry - A function to add a host to the database
-Function addHostEntry($ipaddr, $hostname="", $parent="") {
-	
 }

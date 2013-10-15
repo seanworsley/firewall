@@ -12,8 +12,9 @@ param(
 # Load required powershell modules
 Import-Module sqlite
 
-# Load supporting function. Assumes functions are located in the same directory
-.{.\CRUD.ps1}
+# Load supporting functions. Assumes functions are located in the same directory
+$curPath = Get-Location
+. $curPath\CRUD.ps1
 
 # Globals
 $sqliteDriveName = "db"
@@ -32,7 +33,7 @@ if ($dbPath -eq "") {
 		Write-Host "No local DB found. Creating new Database and initialising tables"
 		# Init DB with default database tables
 		mount-sqlite -name $sqliteDriveName -dataSource $dbPath
-		New-Item db:\grp -Value @{ name="TEXT NOT NULL" } | Out-Null
+		New-Item db:\grp -Value @{ grpname="TEXT NOT NULL" } | Out-Null
 		New-Item db:\hosts -Value @{ hostname="TEXT"; ipv4="TEXT NOT NULL" } | Out-Null
 		New-Item db:\grphosts -Value @{ parentid="INTEGER NOT NULL"; childid="INTEGER NOT NULL"; g2g="BOOLEAN NOT NULL" } | Out-Null
 	}
@@ -42,28 +43,40 @@ if ($dbPath -eq "") {
 }
 
 # Main Menu
-$title = "Firewall Database"
-$message = "What would you like to do?"
-$add = New-Object System.Management.Automation.Host.ChoiceDescription "&Add", `
-    "Add an entry to the database."
-$remove = New-Object System.Management.Automation.Host.ChoiceDescription "&Remove", `
-    "Remove an entry from the database."
-$inspect = New-Object System.Management.Automation.Host.ChoiceDescription "&Inspect", `
-	"Inspect current entries"
-$options = [System.Management.Automation.Host.ChoiceDescription[]]($add, $remove, $inspect)
+while ($true) {
+	$title = "Firewall Database"
+	$message = "What would you like to do?"
+	$add = New-Object System.Management.Automation.Host.ChoiceDescription "&Add", `
+		"Add an entry to the database."
+	$remove = New-Object System.Management.Automation.Host.ChoiceDescription "&Remove", `
+		"Remove an entry from the database."
+	$inspect = New-Object System.Management.Automation.Host.ChoiceDescription "&Inspect", `
+		"Inspect current entries"
+	$quit = New-Object System.Management.Automation.Host.ChoiceDescription "&Quit", `
+		"Quit"
+	$options = [System.Management.Automation.Host.ChoiceDescription[]]($add, $remove, $inspect, $quit)
 
-$result = $host.ui.PromptForChoice($title, $message, $options, 0) 
+	$result = $host.ui.PromptForChoice($title, $message, $options, 0) 
 
-switch ($result)
-    {
-        0 {"You selected Add."}
-        1 {"You selected Remove."}
-		2 {"You selected Inspect."} 
-    }
+	switch ($result)
+		{
+			0 
+			{	
+				$ipaddr = Read-Host "Enter the ipaddress to add"
+				$hostname = Read-Host "Enter the hostname to add (Optional)"
+				addHostEntry($ipaddr,$hostname)
+			}
+			1 {"You selected Remove."}
+			2 {"You selected Inspect."} 
+			3 
+			{
+				"Cleaning up and Exiting"
+				$driveStatus = Get-PSDrive | select Name | where { $_.name -eq $sqliteDriveName}
+				if ($driveStatus -ne $null) {
+					Remove-PSDrive $sqliteDriveName
+				}
+				Exit
+			}
+		}
 
-
-# Cleanup
-$driveStatus = Get-PSDrive | select Name | where { $_.name -eq $sqliteDriveName}
-if ($driveStatus -ne $null) {
-	Remove-PSDrive $sqliteDriveName
 }
